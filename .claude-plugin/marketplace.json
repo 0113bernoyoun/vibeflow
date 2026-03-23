@@ -1,0 +1,25 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "vibeflow",
+  "version": "1.0.0",
+  "description": "TDD-based design-build-verify pipeline with behavior-unit loops. Orchestrates spec-writer, planner, builder, and verifier skills to enforce Red-Green-Refactor cycles per behavior.",
+  "owner": {
+    "name": "0113bernoyoun"
+  },
+  "plugins": [
+    {
+      "name": "vibeflow",
+      "description": "TDD 기반 설계-구현-검증 파이프라인. spec-writer, planner, builder, verifier 스킬을 오케스트레이션하여 behavior 단위 Red-Green-Refactor 사이클을 강제합니다. Gradle, Maven, npm 등 다양한 빌드 도구를 자동 감지합니다.",
+      "version": "1.0.0",
+      "source": "./",
+      "category": "development",
+      "skills": [
+        "./skills/vibeflow",
+        "./skills/spec-writer",
+        "./skills/planner",
+        "./skills/builder",
+        "./skills/verifier"
+      ]
+    }
+  ]
+}

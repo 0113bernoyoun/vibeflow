@@ -40,8 +40,8 @@
 {직접 수행한 리팩토링 및 정리 내역}
 
 ### Build Verification
-- 컴파일 (`./gradlew compileJava`): SUCCESS/FAIL
-- 빌드 (`./gradlew build`): SUCCESS/FAIL
+- 컴파일 (`{compile}`): SUCCESS/FAIL
+- 빌드 (`{build}`): SUCCESS/FAIL
 - 경고 사항: {있으면 명시}
 
 ### Final Verdict

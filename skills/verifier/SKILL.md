@@ -106,7 +106,7 @@ allowed-tools: Read, Edit, Bash, Glob, Grep
 
 ### 3. 테스트 품질 검증
 
-- 전체 테스트를 직접 실행합니다: `./gradlew test`
+- 전체 테스트를 직접 실행합니다: `{test_all}`
 - 각 테스트가 **의미 있는 검증**을 하는지 확인합니다 (assert 없는 테스트, 항상 통과하는 테스트 등 적발).
 - 테스트 커버리지가 behavior 명세를 충분히 반영하는지 판단합니다.
 
@@ -116,14 +116,14 @@ allowed-tools: Read, Edit, Bash, Glob, Grep
 - 구현 과정에서 생긴 데드 코드(사용하지 않는 변수나 메서드)를 정리합니다.
 - TODO, FIXME 등 미완성 마커가 남아있지 않은지 확인합니다.
 
-### 5. Java/Spring Boot 아키텍처 준수
+### 5. 프로젝트 아키텍처 준수
 
 - 프로젝트의 코드 컨벤션(CLAUDE.md 혹은 rules 디렉토리 내 존재)에 맞는지 확인합니다:
 
 ### 6. 빌드 및 컴파일 검증
 
-- **전체 컴파일**: `./gradlew compileJava`를 실행하여 비-테스트 코드 포함 전체 컴파일이 성공하는지 확인합니다.
-- **전체 빌드**: `./gradlew build`를 실행하여 패키징까지 정상 완료되는지 확인합니다.
+- **전체 컴파일**: `{compile}`을 실행하여 비-테스트 코드 포함 전체 컴파일이 성공하는지 확인합니다.
+- **전체 빌드**: `{build}`를 실행하여 패키징까지 정상 완료되는지 확인합니다.
 - **컴파일 경고**: deprecated API 사용, unchecked 경고 등을 보고합니다 (FAIL 사유는 아님).
 
 **빌드 실패 시 "Safe to Merge"를 발행하지 마세요.**
@@ -163,12 +163,12 @@ Verification Report 끝에 아래 섹션을 반드시 추가합니다:
 - 사소한 리팩토링은 사용자에게 묻지 말고 **직접 수행**한 뒤 결과만 보고하세요.
 - 구조적인 결함이 발견되면 절대 승인하지 말고 `planner` 단계부터 다시 시작할 것을 권고하세요.
 - **TDD 증거 없이 "Safe to Merge"를 발행하지 마세요.** 증거가 없으면 Requires Revision입니다.
-- **언어**: Java/Spring Boot 환경입니다. Kotlin이 아닙니다.
+- **기술 스택**: vibeflow에서 전달받은 프로젝트 빌드 환경을 따릅니다. `{test_all}`, `{compile}`, `{build}` 등은 프로젝트에 맞는 실제 명령으로 치환하여 사용하세요.
 
 ## Gotchas
 
-1. **Builder 보고서만 읽고 직접 테스트를 실행하지 않는 실수**: builder가 PASS라고 보고해도 반드시 `./gradlew test`와 `./gradlew build`를 직접 실행하세요. 보고서는 증거가 아닙니다.
-2. **빌드 실패 상태에서 "Safe to Merge"를 발행하는 실수**: `./gradlew build`가 실패하면 어떤 경우에도 Safe to Merge를 발행하지 마세요.
+1. **Builder 보고서만 읽고 직접 테스트를 실행하지 않는 실수**: builder가 PASS라고 보고해도 반드시 `{test_all}`와 `{build}`를 직접 실행하세요. 보고서는 증거가 아닙니다.
+2. **빌드 실패 상태에서 "Safe to Merge"를 발행하는 실수**: `{build}`가 실패하면 어떤 경우에도 Safe to Merge를 발행하지 마세요.
 3. **기존 테스트의 무단 변경을 탐지하지 못하는 실수**: `@Disabled`, `@Ignore` 추가, assert 약화(`isEqualTo` → `isNotNull`) 등을 반드시 확인하세요. {slug}-plan.md에 없는 변경은 FAIL입니다.
 4. **"통과한 것 같다"로 PASS를 주는 실수**: 추측은 판단 근거가 아닙니다. 실행 증거가 없으면 FAIL입니다. 메타 자기 점검에서 이를 최종 확인하세요.
 

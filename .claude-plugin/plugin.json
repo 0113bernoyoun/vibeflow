@@ -1,0 +1,8 @@
+{
+  "name": "vibeflow",
+  "version": "1.0.0",
+  "description": "TDD-based design-build-verify pipeline with behavior-unit loops",
+  "author": {
+    "name": "0113bernoyoun"
+  }
+}

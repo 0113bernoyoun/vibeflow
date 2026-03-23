@@ -93,7 +93,7 @@ allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 
 1. {slug}-plan.md의 `Existing Test Baseline` 섹션과 현재 behavior의 `기존 테스트` 필드를 확인합니다.
 2. 영향 범위 모듈의 **기존 테스트를 실행**합니다:
-   - `./gradlew :모듈명:test` 또는 관련 테스트 클래스만 실행
+   - `{test_module}` 또는 관련 테스트 클래스만 실행
 3. 아래 항목을 기록합니다:
 
 ```
@@ -125,15 +125,15 @@ allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 
 1. 지정된 behavior의 명세를 읽습니다.
 2. 이 behavior를 검증하는 **테스트 1개**를 작성합니다.
-   - JUnit 5 / Java 기준
-   - 테스트 클래스가 없으면 새로 생성, 있으면 메서드 추가
+   - 프로젝트의 테스트 프레임워크 기준
+   - 테스트 클래스/파일이 없으면 새로 생성, 있으면 메서드/케이스 추가
 3. **구현 코드를 작성하기 전에** 테스트를 실행합니다.
 4. 테스트가 **실패하는 것을 확인**하고, 실패 출력을 기록합니다.
 
 ```
 [Red 증거]
 - 테스트명: {테스트 메서드명}
-- 실행 명령: ./gradlew test --tests "{테스트 클래스명.메서드명}"
+- 실행 명령: {test_single}
 - 실패 메시지: {실패 출력 요약}
 ```
 
@@ -145,15 +145,15 @@ allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 
 1. 테스트를 통과시키기 위한 **최소한의 코드**만 작성합니다.
 2. "최소"란: 이 테스트만 통과시키는 것. 미래를 위한 코드 금지.
-3. 구현 후 **전체 테스트**를 실행합니다 (`./gradlew test`).
+3. 구현 후 **전체 테스트**를 실행합니다 (`{test_all}`).
 4. 전체 테스트가 **통과하는 것을 확인**합니다.
 
 ```
 [Green 증거]
 - 변경 파일: {수정/생성한 파일 목록}
-- 실행 명령: ./gradlew test
+- 실행 명령: {test_all}
 - 결과: BUILD SUCCESSFUL (테스트 N개 통과)
-- 빌드 검증: ./gradlew compileJava → SUCCESS/FAIL
+- 빌드 검증: {compile} → SUCCESS/FAIL
 - 기존 테스트 관리:
   - 보호 대상: {N}개 전체 통과 확인
   - 보강: {수행 내역 또는 "해당 없음"}
@@ -177,9 +177,9 @@ allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 ```
 [Refactor 증거]
 - 수행 내역: {리팩토링 내용 또는 "불필요"}
-- 실행 명령: ./gradlew test
+- 실행 명령: {test_all}
 - 결과: BUILD SUCCESSFUL (테스트 N개 통과)
-- 빌드 검증: ./gradlew compileJava → SUCCESS/FAIL
+- 빌드 검증: {compile} → SUCCESS/FAIL
 - 기존 테스트 관리:
   - 보호 대상: {N}개 전체 통과 확인
   - 보강: {수행 내역 또는 "해당 없음"}
@@ -197,6 +197,8 @@ allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 - **테스트를 실행하지 않고 "통과할 것"이라고 추측하지 마세요.** 반드시 실행합니다.
 - **구현을 먼저 작성하고 테스트를 나중에 맞추지 마세요.** Red가 먼저입니다.
 - **전달받은 plan-path의 {slug}-plan.md에 없는 기능을 추가하지 마세요.** 범위 밖이면 vibeflow에 보고합니다.
+- **구현 중 계획에 없는 behavior가 필요하다고 판단되면, 임의로 구현하지 말고 즉시 중단하세요.** vibeflow에 `[Missing Behavior]` 태그와 함께 어떤 behavior가 필요한지 보고합니다.
+- **현재 behavior의 구현이 미래 behavior의 명세와 충돌하는 것을 발견하면 즉시 중단하세요.** vibeflow에 `[Spec Conflict]` 태그와 함께 어떤 behavior와 어떻게 충돌하는지 보고합니다.
 - **"should", "probably", "seems to"로 완료를 주장하지 마세요.** 실행 증거만 인정됩니다.
 - **behavior 명세가 모호하여 테스트를 작성할 수 없으면, 임의로 해석하지 말고 즉시 중단하세요.** vibeflow에 `[Ambiguous Spec]` 태그와 함께 어떤 부분이 모호한지 보고합니다.
 - **{slug}-plan.md에서 "보호" 등급인 기존 테스트를 수정/삭제하지 마세요.** 보호 대상 테스트는 어떤 이유로든 변경 금지입니다.
@@ -206,15 +208,15 @@ allowed-tools: Read, Write, Edit, Bash, Glob, Grep
 
 ## 실행 지침
 
-- **언어**: Java/Spring Boot 환경입니다. Kotlin이 아닙니다.
+- **기술 스택**: vibeflow에서 전달받은 프로젝트 빌드 환경을 따릅니다. `{test_all}`, `{test_single}`, `{compile}`, `{build}` 등은 프로젝트에 맞는 실제 명령으로 치환하여 사용하세요.
 - **컴파일 우선**: 코드를 수정할 때마다 컴파일 에러를 체크하세요.
-- **컨벤션 준수**: 프로젝트의 코드 컨벤션(CLAUDE.md)을 따르세요.
+- **컨벤션 준수**: 프로젝트의 코드 컨벤션(CLAUDE.md 또는 .claude/rules/)을 따르세요.
 - **연쇄 수정 경고**: 하나의 수정이 프로젝트 전체에 영향을 준다면 즉시 중단하고 보고하세요.
 
 ## Gotchas
 
 1. **Red 전에 구현을 먼저 작성하는 역순 TDD**: 구현 코드가 먼저 존재하면 테스트가 "실패 확인" 단계를 건너뛰게 됩니다. 반드시 테스트를 먼저 작성하고 실패를 확인한 후 구현하세요.
 2. **테스트 코드 버그를 유효한 Red로 간주하는 실수**: import 오류, 오타로 인한 컴파일 에러는 "구현 부재"가 아닙니다. Critic 점검에서 "이 실패가 구현 부재 때문인가?"를 반드시 확인하세요.
-3. **단일 테스트 통과만으로 Green을 선언하는 실수**: Green 단계에서는 반드시 `./gradlew test`로 전체 테스트를 실행해야 합니다. 새 코드가 기존 테스트를 깨뜨리지 않는지 확인하세요.
+3. **단일 테스트 통과만으로 Green을 선언하는 실수**: Green 단계에서는 반드시 `{test_all}`로 전체 테스트를 실행해야 합니다. 새 코드가 기존 테스트를 깨뜨리지 않는지 확인하세요.
 4. **"보호" 등급 기존 테스트를 수정하는 실수**: {slug}-plan.md에서 "보호"로 지정된 테스트는 어떤 이유로든 변경 금지입니다. 보호 대상을 수정하면 verifier에서 FAIL 처리됩니다.
 5. **2회 재시도 제한을 초과하여 무한 루프에 빠지는 실수**: 자체 수정은 최대 2회입니다. 해결 안 되면 즉시 중단하고 vibeflow에 보고하세요.
