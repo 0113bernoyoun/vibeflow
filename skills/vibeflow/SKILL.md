@@ -47,6 +47,8 @@ allowed-tools: Read, Write, Glob, Grep, Bash
 
 파이프라인의 모든 코드 변경은 **격리된 워크트리**에서 진행합니다.
 
+**중요: `EnterWorktree` 도구를 사용하지 마세요.** 이 도구는 `.claude/worktrees/` 하위에 생성하여 메인 레포와 경로가 달라지는 문제가 있습니다. 반드시 아래 bash 명령어로 직접 생성하세요.
+
 #### 워크트리 경로 규칙
 
 워크트리는 **현재 레포지토리의 형제 디렉토리**에 생성합니다. 레포지토리보다 상위로 올라가거나 무관한 경로에 생성하는 것은 **금지**입니다.
@@ -56,18 +58,22 @@ allowed-tools: Read, Write, Glob, Grep, Bash
 REPO_ROOT=$(git rev-parse --show-toplevel)
 REPO_NAME=$(basename "$REPO_ROOT")
 PARENT_DIR=$(dirname "$REPO_ROOT")
+CURRENT_BRANCH=$(git branch --show-current)
 
 # 2. 워크트리 경로를 결정합니다
 WORKTREE_PATH="${PARENT_DIR}/.vibeflow-worktrees/${REPO_NAME}/${slug}"
 
-# 3. 브랜치를 생성하고 워크트리를 초기화합니다
-git worktree add "$WORKTREE_PATH" -b "vibeflow/${slug}"
+# 3. 현재 체크아웃된 브랜치의 HEAD를 기준으로 워크트리를 생성합니다
+git worktree add "$WORKTREE_PATH" -b "vibeflow/${slug}" HEAD
 ```
+
+**핵심: 현재 체크아웃된 브랜치(HEAD)를 기준으로 워크트리를 생성합니다.** production이나 main이 아닌, 사용자가 현재 작업 중인 브랜치의 최신 커밋이 기준점입니다.
 
 **경로 예시:**
 - 레포가 `/Users/dev/my-project`이면
 - 워크트리는 `/Users/dev/.vibeflow-worktrees/my-project/{slug}`에 생성
 - **절대로** `/Users/.vibeflow-worktrees/...`나 `/tmp/...` 등 상위/무관 경로에 생성하지 않음
+- **절대로** `.claude/worktrees/` 하위에 생성하지 않음
 
 #### 워크트리 생성 후
 
@@ -428,4 +434,6 @@ Verifier가 **"Safe to Merge"**를 발행하고 Lessons Learned가 기록된 후
 7. **파이프라인 중단 시 문서를 저장하지 않고 워크트리를 폐기하는 실수**: 코드는 사라져도 됩니다. 하지만 SPEC, PLAN, LESSONS 문서는 메인 브랜치에 반드시 저장한 후 폐기하세요.
 8. **워크트리 없이 메인 브랜치에서 직접 작업하는 실수**: 파이프라인은 반드시 격리된 워크트리에서 실행하세요. 메인 브랜치 직접 변경은 롤백이 불가능합니다.
 9. **워크트리를 레포지토리 상위 또는 무관한 경로에 생성하는 실수**: 워크트리는 반드시 `$(dirname "$REPO_ROOT")/.vibeflow-worktrees/${REPO_NAME}/${slug}` 경로에 생성하세요. `/tmp/`, 홈 디렉토리 루트, 레포보다 상위 디렉토리 등에 생성하면 안 됩니다.
+10. **`EnterWorktree` 도구를 사용하는 실수**: `EnterWorktree`는 `.claude/worktrees/` 하위에 워크트리를 생성하여 메인 레포와 경로가 달라집니다. 반드시 Phase -1의 bash 명령어로 직접 생성하세요.
+11. **production/main 기준으로 워크트리를 생성하는 실수**: 워크트리는 반드시 **현재 체크아웃된 브랜치의 HEAD**를 기준으로 생성하세요. 사용자가 feature 브랜치에서 작업 중이면 그 브랜치가 기준점입니다.
 
